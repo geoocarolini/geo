@@ -1,0 +1,62 @@
+public class Fire extends Robot {
+int dist = 50; // cria uma distância padrão para se mover
+/**
+ * run: Aqui estão as funções principais do Fire
+ */
+public void run() {
+// Seta as cores
+setBodyColor(Color.orange);
+setGunColor(Color.orange);
+setRadarColor(Color.red);
+setScanColor(Color.red);
+setBulletColor(Color.red);
+// Determina que o canhão seja girado lentamente... sempre
+while (true) {
+turnGunRight(5);
+}
+}
+/**
+ * Quando outro robô for detectado: Atira!
+ */
+public void onScannedRobot(ScannedRobotEvent e) {
+// Se o outro robô está próximo, e ele tem bastante vida,
+// dispara intensamente!
+if (e.getDistance() < 50 && getEnergy() > 50) {
+fire(3);
+} // caso contrário, atira com intensidade 1.
+else {
+fire(1);
+}
+// Depois de atirar chama o radar novamente,
+// antes de girar o canhão
+scan();
+}
+/**
+ * Quando for atingido por um disparo:
+ * Gira perpendicularmente à bala e avança um pouco.
+ */
+public void onHitByBullet(HitByBulletEvent e) {
+turnRight(normalRelativeAngleDegrees(90 - (getHeading() -
+e.getHeading())));
+ahead(dist); //avança
+dist *= -1;
+scan();
+}
+/**
+ * Quando o robô bate em outro: Ajusta a mira pra ele e dispara
+ * intensamente
+ */
+public void onHitRobot(HitRobotEvent e) {
+ //É criada a variável turnGumAmt que recebe o valor do calculo
+ //de quanto a mira do canhão deve ser ajustada.
+ //Para encontrar o valor adequado de ajuste, é chamada a função
+//para normalizar um ângulo.
+//Nesse exemplo é feito um cálculo entre o ângulo entre os robôs somado
+//com o ângulo do adversário em relação a tela menos a inclinação do
+canhão
+double turnGunAmt = normalRelativeAngleDegrees(e.getBearing() +
+getHeading() - getGunHeading());
+turnGunRight(turnGunAmt);
+fire(3);
+}
+}
